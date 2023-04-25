@@ -59,7 +59,7 @@ def main():
 
         prev_kk_center = kk_rect.center
         key_list = pg.key.get_pressed()
-        kk_vel = [0, 0]
+        kk_vel = [0, 0] # こうかとんの速度
         for k, v in ipt_dict.items():
             if (key_list[k]):
                 kk_rect.move_ip(v)
@@ -78,11 +78,14 @@ def main():
         
         screen.blit(bomb_img, bomb_rect)
 
+        # Game Over処理
         if (kk_rect.colliderect(bomb_rect)):
+            # 各種Surface更新
             screen.blit(bg_img, [0, 0])
             screen.blit(kk_deth_img, kk_rect)
             screen.blit(bomb_img, bomb_rect)
             pg.display.update()
+            # tickを変更し、約5秒待機
             clock.tick(0.2)
             return
 
@@ -91,7 +94,7 @@ def main():
         pg.display.update()
         clock.tick(1000)
 
-def check_in_screen(obj_rect: pg.Rect, screen_rect: pg.Rect):
+def check_in_screen(obj_rect: pg.Rect, screen_rect: pg.Rect) -> tuple[bool, bool]:
     """
     オブジェクトが画面内にあるかを表すboolタプルを返す
 
