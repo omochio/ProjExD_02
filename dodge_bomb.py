@@ -46,10 +46,7 @@ def main():
         pg.K_RIGHT: (1, 0) 
     }
 
-    deth_flag = False
-
     tmr = 0
-    deth_time = 0
 
     while True:
         for event in pg.event.get():
@@ -59,17 +56,6 @@ def main():
         tmr += 1
 
         screen.blit(bg_img, [0, 0])
-
-        if (deth_flag):
-            screen.blit(kk_deth_img, kk_rect)
-            screen.blit(bomb_img, bomb_rect)
-            pg.display.update()
-            clock.tick(1)
-            print(tmr - deth_time)
-            if (tmr - deth_time >= 5):
-                return
-            else:
-                continue
 
         prev_kk_center = kk_rect.center
         key_list = pg.key.get_pressed()
@@ -93,8 +79,13 @@ def main():
         screen.blit(bomb_img, bomb_rect)
 
         if (kk_rect.colliderect(bomb_rect)):
-            deth_time = tmr
-            deth_flag = True
+            screen.blit(bg_img, [0, 0])
+            screen.blit(kk_deth_img, kk_rect)
+            screen.blit(bomb_img, bomb_rect)
+            pg.display.update()
+            clock.tick(0.2)
+            return
+
             
 
         pg.display.update()
