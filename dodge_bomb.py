@@ -18,6 +18,7 @@ def main():
 
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    # 回転させたこうかとんのdict
     kk_rot_dict = {
         (0, 0): kk_img,
         (0, -1): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), 90, 1),
@@ -80,16 +81,9 @@ def main():
 
         # Game Over処理
         if (kk_rect.colliderect(bomb_rect)):
-            # 各種Surface更新
-            screen.blit(bg_img, [0, 0])
-            screen.blit(kk_deth_img, kk_rect)
-            screen.blit(bomb_img, bomb_rect)
-            pg.display.update()
-            # tickを変更し、約5秒待機
-            clock.tick(0.2)
+            game_over(screen, bg_img, kk_deth_img, kk_rect, bomb_img, bomb_rect, clock)
             return
 
-            
 
         pg.display.update()
         clock.tick(1000)
@@ -99,7 +93,7 @@ def check_in_screen(obj_rect: pg.Rect, screen_rect: pg.Rect) -> tuple[bool, bool
     オブジェクトが画面内にあるかを表すboolタプルを返す
 
     obj_rect: オブジェクトのRect
-    screen_rect: ScreenのRect
+    screen_rect: screenのRect
 
     戻り値: (横方向, 縦方向) 
     """
@@ -109,6 +103,35 @@ def check_in_screen(obj_rect: pg.Rect, screen_rect: pg.Rect) -> tuple[bool, bool
     if (obj_rect.top < screen_rect.top or obj_rect.bottom > screen_rect.bottom):
         ver = False
     return (hor, ver)
+
+def game_over(
+        screen: pg.Surface, 
+        bg_img: pg.Surface, 
+        kk_deth_img: pg.Surface, 
+        kk_rect: pg.Rect, 
+        bomb_img: pg.Surface,
+        bomb_rect: pg.Rect,
+        clock: pg.time.Clock) -> None:
+    """
+    ゲームオーバー時にスクリーンを更新し、遅延後にプログラムを終了させる
+
+    screen: screenのSurface
+    bg_img: 背景のSurface
+    kk_deth_img: ゲームオーバー時のこうかとんSurface
+    kk_rect: こうかとんのRect
+    bomb_img: 爆弾のSurface
+    bomb_rect: 爆弾のRect
+    clock: Clockインスタンス 
+
+    戻り値: None
+    """
+    # 各種Surface更新
+    screen.blit(bg_img, [0, 0])
+    screen.blit(kk_deth_img, kk_rect)
+    screen.blit(bomb_img, bomb_rect)
+    pg.display.update()
+    # tickを変更し、約5秒待機
+    clock.tick(0.2)
 
 
 if __name__ == "__main__":
