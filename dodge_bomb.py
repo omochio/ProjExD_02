@@ -58,6 +58,9 @@ def main():
         bomb_rect.move_ip(bomb_vel)
         screen.blit(bomb_img, bomb_rect)
 
+        if (kk_rect.colliderect(bomb_rect)):
+            return
+
         pg.display.update()
         clock.tick(1000)
 
