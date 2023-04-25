@@ -1,4 +1,5 @@
 import random
+import math
 import sys
 import pygame as pg
 
@@ -14,6 +15,17 @@ def main():
 
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_rot_dict = {
+        (0, 0): kk_img,
+        (0, -1): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), 90, 1),
+        (1, -1): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), 45, 1),
+        (1, 0): pg.transform.flip(kk_img, True, False),
+        (1, 1): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), -45, 1),
+        (0, 1): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), -90, 1),
+        (-1, 1): pg.transform.rotozoom(kk_img, 45, 1),
+        (-1, 0): kk_img,
+        (-1, -1): pg.transform.rotozoom(kk_img, -45, 1)
+    }
     kk_rect = kk_img.get_rect()
     kk_rect.center = (900, 400)
 
@@ -44,12 +56,16 @@ def main():
 
         prev_kk_center = kk_rect.center
         key_list = pg.key.get_pressed()
+        kk_vel = [0, 0]
         for k, v in ipt_dict.items():
             if (key_list[k]):
                 kk_rect.move_ip(v)
+                kk_vel[0] += v[0]
+                kk_vel[1] += v[1]
+        kk_rot_img = kk_rot_dict[tuple(kk_vel)]
         if (check_in_screen(kk_rect, screen_rect) != (True, True)):
             kk_rect.center = prev_kk_center
-        screen.blit(kk_img, kk_rect)
+        screen.blit(kk_rot_img, kk_rect)
 
         if (not check_in_screen(bomb_rect, screen_rect)[0]):
             bomb_vel[0] *= -1
