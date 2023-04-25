@@ -13,6 +13,9 @@ def main():
 
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
 
+    kk_deth_img = pg.image.load("ex02/fig/8.png")
+    kk_deth_img = pg.transform.rotozoom(kk_deth_img, 0, 2.0)
+
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
     kk_rot_dict = {
@@ -43,7 +46,10 @@ def main():
         pg.K_RIGHT: (1, 0) 
     }
 
+    deth_flag = False
+
     tmr = 0
+    deth_time = 0
 
     while True:
         for event in pg.event.get():
@@ -53,6 +59,17 @@ def main():
         tmr += 1
 
         screen.blit(bg_img, [0, 0])
+
+        if (deth_flag):
+            screen.blit(kk_deth_img, kk_rect)
+            screen.blit(bomb_img, bomb_rect)
+            pg.display.update()
+            clock.tick(1)
+            print(tmr - deth_time)
+            if (tmr - deth_time >= 5):
+                return
+            else:
+                continue
 
         prev_kk_center = kk_rect.center
         key_list = pg.key.get_pressed()
@@ -72,10 +89,13 @@ def main():
         if (not check_in_screen(bomb_rect, screen_rect)[1]):
             bomb_vel[1] *= -1
         bomb_rect.move_ip(bomb_vel)
+        
         screen.blit(bomb_img, bomb_rect)
 
         if (kk_rect.colliderect(bomb_rect)):
-            return
+            deth_time = tmr
+            deth_flag = True
+            
 
         pg.display.update()
         clock.tick(1000)
