@@ -4,7 +4,10 @@ import pygame as pg
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
+
     screen = pg.display.set_mode((1600, 900))
+    screen_rect = screen.get_rect()
+
     clock = pg.time.Clock()
 
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
@@ -18,7 +21,7 @@ def main():
     pg.draw.circle(bomb_img, color=(255, 0, 0), center=(10, 10), radius=10)
     bomb_img.set_colorkey((0, 0, 0))
     bomb_rect = bomb_img.get_rect()
-    bomb_rect.center = [random.randint(0, screen.get_width()), random.randint(0, screen.get_height())]
+    bomb_rect.center = [random.randint(0, screen_rect.width), random.randint(0, screen_rect.height)]
     bomb_vel = [1, 1]
 
     ipt_dict = {
@@ -39,19 +42,40 @@ def main():
 
         screen.blit(bg_img, [0, 0])
 
+        prev_kk_center = kk_rect.center
         key_list = pg.key.get_pressed()
         for k, v in ipt_dict.items():
             if (key_list[k]):
                 kk_rect.move_ip(v)
-
+        if (check_in_screen(kk_rect, screen_rect) != (True, True)):
+            kk_rect.center = prev_kk_center
         screen.blit(kk_img, kk_rect)
-        
+
+        if (not check_in_screen(bomb_rect, screen_rect)[0]):
+            bomb_vel[0] *= -1
+        if (not check_in_screen(bomb_rect, screen_rect)[1]):
+            bomb_vel[1] *= -1
         bomb_rect.move_ip(bomb_vel)
         screen.blit(bomb_img, bomb_rect)
-        
 
         pg.display.update()
         clock.tick(1000)
+
+def check_in_screen(obj_rect: pg.Rect, screen_rect: pg.Rect):
+    """
+    オブジェクトが画面内にあるかを表すboolタプルを返す
+
+    obj_rect: オブジェクトのRect
+    screen_rect: ScreenのRect
+
+    戻り値: (横方向, 縦方向) 
+    """
+    hor, ver = True, True
+    if (obj_rect.left < screen_rect.left or obj_rect.right > screen_rect.right):
+        hor = False
+    if (obj_rect.top < screen_rect.top or obj_rect.bottom > screen_rect.bottom):
+        ver = False
+    return (hor, ver)
 
 
 if __name__ == "__main__":
